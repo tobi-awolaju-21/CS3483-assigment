@@ -89,18 +89,20 @@
       fill(255, 50); // Set fill color to blue
       noStroke(); // No outline
       // Left pointer
-      ellipse(mouseXi, mouseYi, 50, 50);
+      ellipse(mouseXi -1000, mouseYi, 50, 50);
       // Right pointer
       ellipse(mouseXi - 500, mouseYi, 50, 50);
       // End of pointers
 
       // Free draw mode start
-      if (fPressed && mouseXi > 500 && mouseXi < 1000 && mouseYi > 0 && mouseYi < 500) {
+      if (fPressed) {
         circleColor = 255;
         let x = 500 * (mouseXi - 500) / 500;
         canvas3.stroke(circleColor);
         canvas3.strokeWeight(5);
-        canvas3.line(prevX - 500, prevY, mouseXi - 500, mouseYi);
+        canvas3.fill(250);
+        canvas3.line(prevX - 1000, prevY, mouseXi - 1000, mouseYi);
+        
       }
       // Free draw mode ends
 

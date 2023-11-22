@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="./p5.js"></script>
+  <script src="./ml5.min.js"></script>
+
+  <title>ml5.js Handpose Example</title>
+</head>
+
+<body>
+  <script>
+    let img1, img2;
+    let prevX, prevY;
+    var mouseXi, mouseYi =0;
+    let circleColor = 255;
+    let fPressed = false;
+    let video; // Variable to hold the webcam video stream
+    let handpose; // Handpose model
+    let predictions = [];
+
+    function preload() {
+      img1 = loadImage('image.jpg');
+      // mg2 = loadImage('image2.png');
+    }
+
+    function setup() {
+      createCanvas(1000, 500);
+      canvas2 = createGraphics(1000, 500);
+      canvas3 = createGraphics(1000, 500);
+
+      img1.resize(500, 500);
+      //img2.resize(500, 500);
+      image(img1, 0, 0);
+
+      // Create a video capture object and start the stream
+      video = createCapture(VIDEO);
+      video.size(500, 500);
+      video.hide(); // Hide the video element
+
+      // Load the Handpose model
+      handpose = ml5.handpose(video, modelReady);
+
+      // Listen for predictions
+      handpose.on('predict', gotPredictions);
+    }
+
+    function modelReady() {
+      console.log('Handpose model loaded.');
+    }
+
+    function gotPredictions(results) {
+      predictions = results;
+    }
+
+    function draw() {
+      // Set background to clear previous frames
+      image(canvas2, 0, 0);
+      // Draw images on the background
+      canvas2.image(img1, 0, 0);
+
+      // Display the live webcam preview
+      image(video, 500, 0, 500, 500);
+
+      // Draw a green dot following the index finger
+      if (predictions.length > 0) {
+        let indexFinger = predictions[0].landmarks[8]; // Index finger tip
+
+        fill(0, 255, 0); // Green color
+        noStroke(); // No outline
+        mouseXi = indexFinger[0] +500;
+        mouseYi = indexFinger[1];
+        ellipse(indexFinger[0] + 500, indexFinger[1], 20, 20); // Draw the green dot
+      }
+
+      // Start of pointers
+      fill(255, 50); // Set fill color to blue
+      noStroke(); // No outline
+      // Left pointer
+      ellipse(mouseXi, mouseYi, 50, 50);
+      // Right pointer
+      ellipse(mouseXi - 500, mouseYi, 50, 50);
+      // End of pointers
+
+      // Free draw mode start
+      if (fPressed && mouseXi > 500 && mouseXi < 1000 && mouseYi > 0 && mouseYi < 500) {
+        circleColor = 255;
+        let x = 500 * (mouseXi - 500) / 500;
+        canvas3.stroke(circleColor);
+        canvas3.strokeWeight(5);
+        canvas3.line(prevX - 500, prevY, mouseXi - 500, mouseYi);
+      }
+      // Free draw mode ends
+
+      // Code that re-displays  canvas3 to keep the free form line
+      image(canvas3, 0, 0);
+
+      // Update the previous position
+      prevX = mouseXi;
+      prevY = mouseYi;
+    }
+
+    // Toggle free form mode
+    document.addEventListener('keydown', function (event) {
+      if (event.keyCode === 70) {
+        console.log(fPressed);
+        fPressed = !fPressed; // Toggle the value
+      }
+    });
+
+    // Clear drawing
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'c' || event.key === 'C') {
+        console.log('C key pressed');
+        canvas3.clear();
+      }
+    });
+  </script>
+</body>
+
+</html>

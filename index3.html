@@ -118,14 +118,14 @@
     document.addEventListener('keydown', function (event) {
       if (event.keyCode === 70) {
         console.log(fPressed);
-        fPressed = !fPressed; // Toggle the value
+        fPressed = true; // Toggle the value
       }
     });
 
     // Clear drawing
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'c' || event.key === 'C') {
-        console.log('C key pressed');
+      if (event.key === 'e' || event.key === 'E') {
+        fPressed = false;
         canvas3.clear();
       }
     });

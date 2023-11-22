@@ -62,7 +62,14 @@
       canvas2.image(img1, 0, 0);
 
       // Display the live webcam preview
-      image(video, 500, 0, 500, 500);
+      
+
+       // Flip the video horizontally
+       push();
+      translate(width, 0);
+      scale(-1, 1);
+      image(video, 0, 0, 500, 500);
+      pop();
 
       // Draw a green dot following the index finger
       if (predictions.length > 0) {
@@ -70,9 +77,12 @@
 
         fill(0, 255, 0); // Green color
         noStroke(); // No outline
-        mouseXi = indexFinger[0] +500;
-        mouseYi = indexFinger[1];
-        ellipse(indexFinger[0] + 500, indexFinger[1], 20, 20); // Draw the green dot
+        // Apply the same transformation to the hand landmarks
+    let flippedIndexFinger = [(width - indexFinger[0]), indexFinger[1]];
+    ellipse(flippedIndexFinger[0], flippedIndexFinger[1], 20, 20); 
+    //end of Draw the green dot
+    mouseXi = flippedIndexFinger[0] +500;
+    mouseYi = flippedIndexFinger[1];
       }
 
       // Start of pointers

@@ -20,6 +20,8 @@
     let video; // Variable to hold the webcam video stream
     let handpose; // Handpose model
     let predictions = [];
+    let regionMode = false;
+    let boundingBox = { x: 0, y: 0, width: 0, height: 0 };
 
     function preload() {
       img1 = loadImage('image.jpg');

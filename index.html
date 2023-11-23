@@ -25,6 +25,11 @@
     let sX, sY; // Inde finger
     let eX, eY; // thumb
 
+    //copying destination
+    let cx1,cx2,cy1,cy2;
+    //pasting destination
+    let vx1,vx2;
+
     function preload() {
       img1 = loadImage('image.jpg');
       // mg2 = loadImage('image2.png');
@@ -79,12 +84,26 @@
       // Draw a green dot following the index finger
       if (predictions.length > 0) {
         let indexFinger = predictions[0].landmarks[8]; // Index finger tip
+        let thumb = predictions[0].landmarks[4]; // Thumb tip
 
-        fill(0, 255, 0); // Green color
+
+        fill(250); // Green color
         noStroke(); // No outline
         // Apply the same transformation to the hand landmarks
     let flippedIndexFinger = [(width - indexFinger[0]), indexFinger[1]];
     ellipse(flippedIndexFinger[0], flippedIndexFinger[1], 20, 20); 
+   
+   
+    // Draw a red dot for the thumb
+    fill(250); // Red color
+    let flippedThumb = [(width - thumb[0]), thumb[1]];
+    ellipse(flippedThumb[0], flippedThumb[1], 10, 10);
+   
+
+      sX = mouseXi -500; // index finger x
+      sY = mouseYi; // index finger y
+      eX = flippedThumb[0]; // thumb x
+      eY = flippedThumb[1]; // thumb y
     //end of Draw the green dot
     mouseXi = flippedIndexFinger[0] +500;
     mouseYi = flippedIndexFinger[1];
@@ -96,7 +115,7 @@
       // Left pointer
       ellipse(mouseXi -1000, mouseYi, 50, 50);
       // Right pointer
-      ellipse(mouseXi - 500, mouseYi, 50, 50);
+     // ellipse(mouseXi - 500, mouseYi, 50, 50);
       // End of pointers
 
       // Free draw mode start
@@ -115,13 +134,14 @@
       //start of boundbox
       
       if(regionMode){
-        sX = 100; // index finger x
-      sY = 100; // index finger y
-      eX = 400; // thumb x
-      eY = 400; // thumb y
+  
       noFill();
       stroke(250);
-      rect(100,100,100,100);
+      rect(sX,sY,eX-sX,eY-sY);
+      // region i want to copy
+      fill(250,50);
+      stroke(250,50);
+      rect(sX-500,sY,eX-sX,eY-sY);
       //end of boundbox
       }
      
@@ -166,6 +186,12 @@
      // Copy 
      document.addEventListener('keydown', function (event) {
       if (event.key === 'c' || event.key === 'C') {
+        rect(sX-500,sY,eX-sX,eY-sY);
+        cx1 = sX-500;
+        cy1 = sY;
+        cx2 = eX;
+        cy2 = eY;
+      console.log(cx1+cy1+cx2+cy2);
        console.log("copy")
       }
     });

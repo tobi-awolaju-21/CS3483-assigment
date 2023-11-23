@@ -29,9 +29,9 @@ function draw() {
   // Update ending point to follow mouse
   eX = mouseX;
   eY = mouseY;
-
   // Draw rectangle
-  fill(0, 150, 255); // Fill color
+  fill(0, 150, 255,50); // Fill color
+  noStroke();
   rect(sX, sY, eX - sX, eY - sY);
 }
 

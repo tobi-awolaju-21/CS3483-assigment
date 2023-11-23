@@ -1,1 +1,24 @@
-//rest
+<script>
+
+let sX, sY; // Fixed starting point
+let eX, eY; // Ending point (follows mouse)
+
+function setup() {
+  createCanvas(400, 400);
+  sX = 100;
+  sY = 100;
+}
+
+function draw() {
+  background(220);
+
+  // Update ending point to follow mouse
+  eX = mouseX;
+  eY = mouseY;
+
+  // Draw rectangle
+  fill(0, 150, 255); // Fill color
+  rect(sX, sY, eX - sX, eY - sY);
+}
+
+</script>

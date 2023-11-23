@@ -193,7 +193,7 @@
         cx2 = eX;
         cy2 = eY;
          // Copy the specified rectangle
-      copiedImage = get(copyX, copyY, copyWidth, copyHeight);
+         copiedImage = get(cx1, cy1, cx2 - cx1, cy2 - cy1);
       console.log(cx1+cy1+cx2+cy2);
        console.log("copy")
       }
@@ -204,6 +204,7 @@
       if (event.key === 'v' || event.key === 'V') {
         // Paste the copied rectangle to a new position
        image(copiedImage, mouseXi, mouseYi);
+       
        console.log("past")
       }
     });

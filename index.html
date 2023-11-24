@@ -25,6 +25,7 @@
     let sX, sY; // Inde finger
     let eX, eY; // thumb
     let copiedImage;
+    let paste = 0;
 
     //copying destination
     let cx1,cx2,cy1,cy2;
@@ -155,8 +156,24 @@
       // Update the previous position
       prevX = mouseXi;
       prevY = mouseYi;
+
+
+    if (paste>0 && paste <2){
+      canvas3.fill(250,50,250);
+      canvas3.stroke(250,50);
+      canvas3.rect(mouseXi-500,mouseYi,100,100);
+      paste = 2;
+    }
+      
+
     }
 
+    
+    
+    
+    
+    
+    
     // Toggle free form mode
     document.addEventListener('keydown', function (event) {
       if (event.keyCode === 70) {
@@ -204,10 +221,16 @@
       if (event.key === 'v' || event.key === 'V') {
         // Paste the copied rectangle to a new position
        image(copiedImage, mouseXi, mouseYi);
-       
+       fill(250,50,250);
+       stroke(250,50);
+       rect(mouseXi-500,mouseYi,100,100);
+       paste = 1;
        console.log("past")
       }
     });
+
+
+       
   </script>
 </body>
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="./p5.js"></script>
+  
+  <title>ml5.js Handpose Example</title>
+</head>
+
+<body>
+
+
+<script>
+    let img;
+let rectX = 0;
+let rectY = 0;
+let rectWidth = 100;
+let rectHeight = 100;
+let copiedImage;
+
+function preload() {
+  // Load your image here
+  img = loadImage('image.jpg');
+}
+
+function setup() {
+  createCanvas(400, 400);
+}
+
+function draw() {
+  background(220);
+  
+  // Display the image
+  image(img, 0, 0, width, height);
+  
+  // Draw the rectangle
+  fill(255, 0, 0, 100);
+  rect(rectX, rectY, rectWidth, rectHeight);
+}
+
+function keyPressed() {
+  // Check if the key pressed is 'C'
+  if (key === 'c' || key === 'C') {
+    // Copy the portion of the image covered by the rectangle
+    copiedImage = img.get(rectX, rectY, rectWidth, rectHeight);
+  }
+
+  // Check if the key pressed is 'V'
+  if (key === 'v' || key === 'V') {
+    // Paste the copied image at the mouse position
+    if (copiedImage) {
+      image(copiedImage, mouseX, mouseY, rectWidth, rectHeight);
+    }
+  }
+}
+
+</script>
+
+
+</body>

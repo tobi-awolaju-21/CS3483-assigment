@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="./p5.js"></script>
   <script src="./ml5.min.js"></script>
-
   <title>ml5.js Handpose Example</title>
 </head>
 
 <body>
-  <script>
-    let img1, img2;
+
+    <script>
+        let img1, img2;
     let prevX, prevY;
     var mouseXi, mouseYi =0;
     let circleColor = 255;
@@ -20,43 +20,54 @@
     let video; // Variable to hold the webcam video stream
     let handpose; // Handpose model
     let predictions = [];
-    let regionMode = false;
+    let regionMode = true;
     let boundingBox = { x: 0, y: 0, width: 0, height: 0 };
     let sX, sY; // Inde finger
     let eX, eY; // thumb
     let copiedImage;
     let paste = 0;
-
     //copying destination
     let cx1,cx2,cy1,cy2;
     //pasting destination
     let vx1,vx2;
 
-    function preload() {
-      img1 = loadImage('image.jpg');
-      // mg2 = loadImage('image2.png');
-    }
+    let selecting = false;
+    let selection = {x:0, y:0, w:0, h:0};
+    let clipboard;
+    let pasteBuffer;
 
-    function setup() {
-      createCanvas(1000, 500);
-      canvas2 = createGraphics(1000, 500);
-      canvas3 = createGraphics(1000, 500);
 
-      img1.resize(500, 500);
-      //img2.resize(500, 500);
-      image(img1, 0, 0);
 
-      // Create a video capture object and start the stream
+
+
+        function preload() {
+          // Load the actual image
+          img = loadImage('image.jpg');
+        }
+    
+        function setup() {
+          createCanvas(1000, 1000);
+          canvas2 = createGraphics(1000, 1000);
+          canvas3 = createGraphics(1000, 1000);
+          img.resize(500, 500);
+          
+        
+          // Create a video capture object and start the stream
       video = createCapture(VIDEO);
       video.size(500, 500);
       video.hide(); // Hide the video element
 
-      // Load the Handpose model
-      handpose = ml5.handpose(video, modelReady);
+  // Load the Handpose model
+  handpose = ml5.handpose(video, modelReady);
 
-      // Listen for predictions
-      handpose.on('predict', gotPredictions);
-    }
+// Listen for predictions
+handpose.on('predict', gotPredictions);
+
+
+          // setup buffer to paste into
+          pasteBuffer = createGraphics(width, height);
+        }
+
 
     function modelReady() {
       console.log('Handpose model loaded.');
@@ -66,15 +77,44 @@
       predictions = results;
     }
 
+
+
+
+
+    
     function draw() {
-      // Set background to clear previous frames
+    background(0);
+         // Set background to clear previous frames
       image(canvas2, 0, 0);
       // Draw images on the background
-      canvas2.image(img1, 0, 0);
+      canvas2.image(img, 0, 0);
+       // render pasted graphics
+      canvas2.image(pasteBuffer, 0, 0);
+      rect(selection.x, selection.y, selection.w, selection.h);
 
-      // Display the live webcam preview
-      
 
+
+
+
+
+
+
+          // start of bound box and copy algorithm
+          if(regionMode){
+        selection.w = eX - selection.x;
+        selection.h = eY - selection.y;
+  // Draw the rectangle to show selectin bound
+  stroke(100,200,100);
+  rect(selection.x,selection.y, selection.w, selection.h);
+  //end of boundbox
+
+
+  }else{
+   // selection.x = mouseX;
+   // selection.y = mouseY;
+  }
+
+// Display the live webcam preview
        // Flip the video horizontally
        push();
       translate(width, 0);
@@ -83,8 +123,9 @@
       pop();
       //rest
 
-      // Draw a green dot following the index finger
-      if (predictions.length > 0) {
+
+ // Draw a green dot following the index finger
+ if (predictions.length > 0) {
         let indexFinger = predictions[0].landmarks[8]; // Index finger tip
         let thumb = predictions[0].landmarks[4]; // Thumb tip
 
@@ -106,6 +147,9 @@
       sY = mouseYi; // index finger y
       eX = flippedThumb[0]; // thumb x
       eY = flippedThumb[1]; // thumb y
+
+      selection.x = sX-500;
+      selection.Y = sY;
     //end of Draw the green dot
     mouseXi = flippedIndexFinger[0] +500;
     mouseYi = flippedIndexFinger[1];
@@ -133,21 +177,6 @@
       // Free draw mode ends
 
 
-      //start of boundbox
-      
-      if(regionMode){
-  
-      noFill();
-      stroke(250);
-      rect(sX,sY,eX-sX,eY-sY);
-      // region i want to copy
-      fill(250,50);
-      stroke(250,50);
-      rect(sX-500,sY,eX-sX,eY-sY);
-      //end of boundbox
-      }
-     
-
 
 
       // Code that re-displays  canvas3 to keep the free form line
@@ -166,14 +195,38 @@
     }
       
 
-    }
 
+
+
+
+
+  
+ }
     
+
+
+        function keyPressed(keyEvent){
+          if (key == 'c') {
+            console.log("copy image", selection);
+            // use get() to "clone" a subsection of the main image
+            clipboard = img.get(selection.x, selection.y, selection.w, selection.h);
+            regionMode = false;
+          }
+          
+          if (key == 'v') {
+            console.log("paste image");
+            console.log("mouseX"+mouseX + "sX"+sX);
+            if(clipboard){
+              // simply render the clipboard image 
+              pasteBuffer.image(clipboard, sX-500, sY);
+              
+            }
+          }
+        }
     
-    
-    
-    
-    
+
+
+         
     // Toggle free form mode
     document.addEventListener('keydown', function (event) {
       if (event.keyCode === 70) {
@@ -200,38 +253,7 @@
         console.log("region selection and copyng mode")
       }
     });
-
-     // Copy 
-     document.addEventListener('keydown', function (event) {
-      if (event.key === 'c' || event.key === 'C') {
-        rect(sX-500,sY,eX-sX,eY-sY);
-        cx1 = sX-500;
-        cy1 = sY;
-        cx2 = eX;
-        cy2 = eY;
-         // Copy the specified rectangle
-         copiedImage = get(cx1, cy1, cx2 - cx1, cy2 - cy1);
-      console.log(cx1+cy1+cx2+cy2);
-       console.log("copy")
-      }
-    });
-
-     // Paste 
-     document.addEventListener('keydown', function (event) {
-      if (event.key === 'v' || event.key === 'V') {
-        // Paste the copied rectangle to a new position
-       image(copiedImage, mouseXi, mouseYi);
-       fill(250,50,250);
-       stroke(250,50);
-       rect(mouseXi-500,mouseYi,100,100);
-       paste = 1;
-       console.log("past")
-      }
-    });
-
-
-       
-  </script>
+    
+    </script>
 </body>
-
 </html>

@@ -5,58 +5,105 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="./p5.js"></script>
-  
   <title>ml5.js Handpose Example</title>
 </head>
 
 <body>
 
-
 <script>
-    let img;
-let rectX = 0;
-let rectY = 0;
-let rectWidth = 100;
-let rectHeight = 100;
-let copiedImage;
+  let img;
+  let rectWidth = 100;
+  let rectHeight = 100;
+  let rectX, rectY;
+  let selecting = false;
 
-function preload() {
-  // Load your image here
-  img = loadImage('image.jpg');
-}
+        let selection = {x:0, y:0, w:0, h:0};
+        // p5.Image from the main image using selection
+        let clipboard;
+        // where to paste the clipboard p5.Image
+        let pasteBuffer;
 
-function setup() {
-  createCanvas(400, 400);
-}
-
-function draw() {
-  background(220);
-  
-  // Display the image
-  image(img, 0, 0, width, height);
-  
-  // Draw the rectangle
-  fill(255, 0, 0, 100);
-  rect(rectX, rectY, rectWidth, rectHeight);
-}
-
-function keyPressed() {
-  // Check if the key pressed is 'C'
-  if (key === 'c' || key === 'C') {
-    // Copy the portion of the image covered by the rectangle
-    copiedImage = img.get(rectX, rectY, rectWidth, rectHeight);
+  function preload() {
+    img = loadImage('image.jpg');
   }
 
-  // Check if the key pressed is 'V'
-  if (key === 'v' || key === 'V') {
-    // Paste the copied image at the mouse position
-    if (copiedImage) {
-      image(copiedImage, mouseX, mouseY, rectWidth, rectHeight);
+  function setup() {
+    createCanvas(800, 400); // Adjusted canvas size to match the image size
+  
+     // setup buffer to paste into
+     pasteBuffer = createGraphics(width, height);
+  }
+
+  function draw() {
+    background(200);
+    // Display the image
+    image(img, 0, 0, 400, 400);
+
+       // render pasted graphics
+       image(pasteBuffer, 0, 0);
+
+   
+
+    if(selecting){
+ // update selection dimension as the difference between the current mouse coordinates and the previous ones (selection x, y)
+  // store selection start
+          selection.x = 200;// my index finger
+          selection.y = 200;
+          selection.w = mouseX - selection.x; // my thumb minumus imdes finger
+          selection.h = mouseY - selection.y; // my thumb minums index finger
     }
+
+
+     // Draw the rectangle
+   noFill();
+    rect(mouseX,mouseY, selection.w, selection.h);
+
+
+
   }
-}
+
+
+
+
+
+
+
+        
+  function keyPressed(keyEvent){
+          if (key == 'c') {
+            selecting = true;
+            console.log("copy image", selection);
+            // use get() to "clone" a subsection of the main image
+            clipboard = img.get(selection.x, selection.y, selection.w, selection.h);
+
+          }
+          
+
+
+          if (key == 'v') {
+            selecting = false;
+            console.log("paste image");
+            if(clipboard){
+              // simply render the clipboard image 
+              pasteBuffer.image(clipboard, mouseX, mouseY);
+            }
+          }
+        }
+
+        function mousePressed(){
+        
+        }
+    
+        function mouseDragged(){
+         
+        }
+    
+
+
+
 
 </script>
 
-
 </body>
+
+</html>

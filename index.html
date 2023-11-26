@@ -20,7 +20,7 @@
     let video; // Variable to hold the webcam video stream
     let handpose; // Handpose model
     let predictions = [];
-    let regionMode = true;
+    let regionMode = false;
     let boundingBox = { x: 0, y: 0, width: 0, height: 0 };
     let sX, sY; // Inde finger
     let eX, eY; // thumb
@@ -90,30 +90,8 @@
       canvas2.image(img, 0, 0);
       // render pasted graphics
       canvas2.image(pasteBuffer, 0, 0);
-      rect(selection.x, selection.y, selection.w, selection.h);
-
-
-
-
-
-
-
-
-      // start of bound box and copy algorithm
-      if (regionMode) {
-        selection.w = eX - selection.x;
-        selection.h = eY - selection.y;
-        // Draw the rectangle to show selectin bound
-        stroke(100, 200, 100);
-        rect(selection.x, selection.y, selection.w, selection.h);
-        //end of boundbox
-
-
-      } else {
-        // selection.x = mouseX;
-        // selection.y = mouseY;
-      }
-
+     
+      
       // Display the live webcam preview
       // Flip the video horizontally
       push();
@@ -149,7 +127,7 @@
         eY = flippedThumb[1]; // thumb y
 
         selection.x = sX - 500;
-        selection.Y = sY;
+        selection.y = sY;
         //end of Draw the green dot
         mouseXi = flippedIndexFinger[0] + 500;
         mouseYi = flippedIndexFinger[1];
@@ -177,6 +155,22 @@
       // Free draw mode ends
 
 
+      // start of bound box and copy algorithm
+      if (regionMode) {
+        selection.w = eX - selection.x;
+        selection.h = eY - selection.y;
+        // Draw the rectangle to show selectin bound
+        noFill();
+        stroke(250);
+        rect(selection.x,selection.y, selection.w-500,selection.h);
+        // as a rectangle for
+        //end of boundbox
+      } else {
+        // just show a new rectangle to show new position and also camera
+      }
+      
+
+      //end of bound box
 
 
       // Code that re-displays  canvas3 to keep the free form line

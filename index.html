@@ -21,6 +21,7 @@
     let handpose; // Handpose model
     let predictions = [];
     let regionMode = false;
+    let selectionMode = false;
     let boundingBox = { x: 0, y: 0, width: 0, height: 0 };
     let sX, sY; // Inde finger
     let eX, eY; // thumb
@@ -166,18 +167,21 @@
         var result = Math.abs(selection.w - 500);
         rect(selection.x,selection.y, result,selection.h);
 
-        // rectangle on the video
-        rect(selection.x+500,selection.y, selection.w - 500,selection.h);
-   
+        
         // as a rectangle for
         //end of boundbox
       } else {
         // just show a new rectangle to show new position and also camera
       }
+
+      if(selectionMode){
+        // rectangle on the video
+        rect(selection.x+500,selection.y, selection.w - 500,selection.h);
+   
+      }
       
 
       //end of bound box
-
 
       // Code that re-displays  canvas3 to keep the free form line
       image(canvas3, 0, 0);
@@ -252,6 +256,7 @@
     document.addEventListener('keydown', function (event) {
       if (event.key === 's' || event.key === 'S') {
         regionMode = true;
+        selectionMode =eY
         console.log("region selection and copyng mode")
       }
     });

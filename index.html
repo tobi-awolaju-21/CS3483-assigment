@@ -162,7 +162,10 @@
         // Draw the rectangle to show selectin bound
         noFill();
         stroke(250);
-        rect(selection.x,selection.y, selection.w-500,selection.h);
+
+        var result = Math.abs(selection.w - 500);
+        rect(selection.x,selection.y, result,selection.h);
+        console.log(result)
         // as a rectangle for
         //end of boundbox
       } else {
@@ -203,7 +206,9 @@
       if (key == 'c') {
         console.log("copy image", selection);
         // use get() to "clone" a subsection of the main image
-        clipboard = img.get(selection.x, selection.y, selection.w, selection.h);
+        var result2 = Math.abs(selection.w - 500);
+        clipboard = img.get(selection.x, selection.y,result2,selection.h);
+        console.log("sX "+selection.x+" sW"+selection.w)
         regionMode = false;
       }
 
